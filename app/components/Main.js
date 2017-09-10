@@ -1,8 +1,12 @@
 import React from "react";
 import { Link } from "react-router";
 
-// import Search from "./children/Search";
+import Search from "./children/Search";
+import Results from "./children/Results";
 // import Saved from "./children/Saved";
+
+
+import helpers from "./utils/helpers";
 
 class Main extends React.Component {
     constructor(props) {
@@ -11,8 +15,52 @@ class Main extends React.Component {
         this.state = {
             searchTopic: "",
             startYear: "",
-            endYear: ""
+            endYear: "",
+            results: "",
+            list: []
         };
+
+        this.setTerm = this.setTerm.bind(this);
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (prevState.searchTopic !== this.state.searchTopic) {
+            console.log("Updated");
+
+            helpers.runQuery(this.state.searchTopic, this.state.startYear, this.state.endYear).then((data) => {
+                if (data !== this.state.results) {
+                    console.log(data);
+
+                    this.setState({ results: data.docs[0].headline.main });
+                    console.log("test", this.state.results);
+
+                    // helpers.postArticles(this.state.results).then(function() {
+                    //     console.log("Posted!", this.state.results);
+        
+                    //     helpers.getArticles().then(function(response) {
+                    //         console.log("Current Articles", response.data);
+        
+                    //         console.log("Articles", response.data);
+        
+                    //         this.setState({ list: response.data[0].title });
+
+                    //         console.log("list", this.state.list);
+                    //     }.bind(this));
+                    // }.bind(this));
+                }
+            });
+
+            
+        }
+    }
+
+
+    setTerm(topic, start, end) {
+        this.setState({
+            searchTopic: topic,
+            startYear: start,
+            endYear: end
+        });
     }
 
     render() {
@@ -27,7 +75,11 @@ class Main extends React.Component {
                 </div>
 
                 <div className="row">
-                    {this.props.children}
+                    
+                    <Search setTerm={this.setTerm} />
+                    <Results articles={this.state.results} />
+                    {/* {this.props.children} */}
+                    {/* {React.cloneElement(this.props.children, { setTerm: this.setTerm})} */}
                 </div>
             </div>
         );

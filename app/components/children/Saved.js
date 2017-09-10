@@ -17,6 +17,7 @@ class Saved extends React.Component {
                 <h5 className="panel-title">Saved Articles</h5>
             </div>
             <div className="panel-body topArticles">
+                {this.props.saved}
             </div> 
 
         </div>
